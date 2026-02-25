@@ -7,31 +7,27 @@ import (
 	"strconv"
 	"strings"
 )
-// Value represents a value in the interpreter
 type Value interface {
 	Type() string
 	String() string
 }
 
-// IntValue represents an integer
 type IntValue int64
 
 func (v IntValue) Type() string   { return "int" }
 func (v IntValue) String() string { return fmt.Sprintf("%d", v) }
 
-// StringValue represents a string
+
 type StringValue string
 
 func (v StringValue) Type() string   { return "string" }
 func (v StringValue) String() string { return string(v) }
 
-// BoolValue represents a boolean
 type BoolValue bool
 
 func (v BoolValue) Type() string   { return "bool" }
 func (v BoolValue) String() string { return fmt.Sprintf("%v", v) }
 
-// Environment stores variables
 type Environment struct {
 	vars map[string]Value
 }
@@ -53,7 +49,6 @@ func (e *Environment) Get(name string) (Value, error) {
 	return nil, fmt.Errorf("undefined variable: %s", name)
 }
 
-// Interpreter processes tokens and executes code
 type Interpreter struct {
 	env     *Environment
 	tokens  []Token
@@ -61,7 +56,6 @@ type Interpreter struct {
 	output  []string
 }
 
-// Token represents a lexical token
 type Token struct {
 	Type    string
 	Literal string
@@ -77,7 +71,6 @@ func NewInterpreter() *Interpreter {
 	}
 }
 
-// Tokenize input string
 func (i *Interpreter) Tokenize(input string) error {
 	keywords := map[string]bool{
 		"var": true, "int": true, "string": true, "bool": true,
@@ -87,7 +80,6 @@ func (i *Interpreter) Tokenize(input string) error {
 
 	line := 1
 	for len(input) > 0 {
-		// Skip whitespace
 		if input[0] == ' ' || input[0] == '\t' {
 			input = input[1:]
 			continue
@@ -98,7 +90,6 @@ func (i *Interpreter) Tokenize(input string) error {
 			continue
 		}
 
-		// Comments
 		if strings.HasPrefix(input, "//") {
 			for len(input) > 0 && input[0] != '\n' {
 				input = input[1:]
@@ -106,7 +97,6 @@ func (i *Interpreter) Tokenize(input string) error {
 			continue
 		}
 
-		// Multi-line comments
 		if strings.HasPrefix(input, "/*") {
 			input = input[2:]
 			for len(input) >= 2 && !strings.HasPrefix(input, "*/") {
@@ -121,7 +111,6 @@ func (i *Interpreter) Tokenize(input string) error {
 			continue
 		}
 
-		// String literals
 		if input[0] == '"' {
 			input = input[1:]
 			literal := ""
@@ -153,7 +142,6 @@ func (i *Interpreter) Tokenize(input string) error {
 			continue
 		}
 
-		// Numbers
 		if input[0] >= '0' && input[0] <= '9' {
 			literal := ""
 			for len(input) > 0 && input[0] >= '0' && input[0] <= '9' {
@@ -164,7 +152,6 @@ func (i *Interpreter) Tokenize(input string) error {
 			continue
 		}
 
-		// Identifiers and keywords
 		if (input[0] >= 'a' && input[0] <= 'z') || (input[0] >= 'A' && input[0] <= 'Z') || input[0] == '_' {
 			literal := ""
 			for len(input) > 0 && ((input[0] >= 'a' && input[0] <= 'z') || (input[0] >= 'A' && input[0] <= 'Z') || input[0] >= '0' && input[0] <= '9' || input[0] == '_' || input[0] == '.') {
@@ -180,7 +167,6 @@ func (i *Interpreter) Tokenize(input string) error {
 			continue
 		}
 
-		// Two-character operators
 		if len(input) >= 2 {
 			twoChar := input[:2]
 			switch twoChar {
@@ -191,7 +177,6 @@ func (i *Interpreter) Tokenize(input string) error {
 			}
 		}
 
-		// Single-character tokens
 		switch input[0] {
 		case '(':
 			i.tokens = append(i.tokens, Token{"LPAREN", "(", line})
