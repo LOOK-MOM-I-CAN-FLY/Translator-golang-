@@ -736,6 +736,40 @@ func (i *Interpreter) Run(input string) error {
 	return i.evaluate()
 }
 
+func (i *Interpreter) REPL() {
+	fmt.Println("Simple Go Interpreter (REPL mode)")
+	fmt.Println("Type 'exit' to quit, 'run FILE' to run a file")
+	fmt.Println()
+
+	reader := bufio.NewReader(os.Stdin)
+
+	for {
+		fmt.Print("> ")
+		input, _ := reader.ReadString('\n')
+		input = strings.TrimSpace(input)
+
+		if input == "exit" {
+			break
+		}
+
+		if strings.HasPrefix(input, "run ") {
+			filename := strings.TrimPrefix(input, "run ")
+			content, err := os.ReadFile(filename)
+			if err != nil {
+				fmt.Printf("Error reading file: %v\n", err)
+				continue
+			}
+			if err := i.Run(string(content)); err != nil {
+				fmt.Printf("Error: %v\n", err)
+			}
+			continue
+		}
+
+		if err := i.Run(input + ";"); err != nil {
+			fmt.Printf("Error: %v\n", err)
+		}
+	}
+} 
 
 func main() {
 	if len(os.Args) < 2 {
