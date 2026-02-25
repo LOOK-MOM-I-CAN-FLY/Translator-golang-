@@ -710,6 +710,25 @@ func (i *Interpreter) toBool(v Value) bool {
 
 
 
+func (i *Interpreter) compare(left Value, op string, right Value) bool {
+	switch op {
+	case "==":
+		return left.String() == right.String()
+	case "!=":
+		return left.String() != right.String()
+	case "<":
+		return i.toInt(left) < i.toInt(right)
+	case ">":
+		return i.toInt(left) > i.toInt(right)
+	case "<=":
+		return i.toInt(left) <= i.toInt(right)
+	case ">=":
+		return i.toInt(left) >= i.toInt(right)
+	}
+	return false
+}
+
+
 
 func main() {
 	if len(os.Args) < 2 {
