@@ -729,6 +729,13 @@ func (i *Interpreter) compare(left Value, op string, right Value) bool {
 }
 
 
+func (i *Interpreter) Run(input string) error {
+	if err := i.Tokenize(input); err != nil {
+		return err
+	}
+	return i.evaluate()
+}
+
 
 func main() {
 	if len(os.Args) < 2 {
