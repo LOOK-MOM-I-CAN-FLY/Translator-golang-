@@ -1,4 +1,4 @@
-
+# ЭТО ТУПО ШАБЛОН ДАЖЕ НЕ БЛИЗКО ГОТОВЫЙ ДОКЕРФАЙЛ ДЛЯ ПРОЕКТА
 FROM golang:1.23-alpine AS builder
 
 RUN apk add --no-cache openjdk11-jre curl
