@@ -1,6 +1,6 @@
 /*
  * Parser для упрощенного подмножества Go
- * Поддерживает: переменные, базовые типы, операции, if-else, for, fmt.Println
+ * Поддерживает: переменные, базовые типы, операции, if-else, for, fmt.Println, классы и структуры
  */
 
 parser grammar SimpleParser;
@@ -11,7 +11,29 @@ options {
 
 // Program entry point
 program
-    : (declaration | statement)* EOF
+    : (typeDeclaration | declaration | statement)* EOF
+    ;
+
+// Type declarations: structs and classes
+typeDeclaration
+    : structDeclaration
+    | classDeclaration
+    ;
+
+structDeclaration
+    : STRUCT IDENTIFIER LBRACE structField* RBRACE
+    ;
+
+structField
+    : IDENTIFIER type_ SEMICOLON
+    ;
+
+classDeclaration
+    : CLASS IDENTIFIER LBRACE classMember* RBRACE
+    ;
+
+classMember
+    : VAR IDENTIFIER type_ SEMICOLON
     ;
 
 // Variable declarations
@@ -24,6 +46,7 @@ type_
     : INT
     | STRING
     | BOOL
+    | IDENTIFIER
     ;
 
 // Statements
@@ -79,6 +102,10 @@ expression
     ;
 
 primary
+    : primaryBase (DOT IDENTIFIER)*
+    ;
+
+primaryBase
     : INT_LIT
     | STRING_LIT
     | IDENTIFIER
